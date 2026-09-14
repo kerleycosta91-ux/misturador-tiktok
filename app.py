@@ -65,7 +65,7 @@ st.markdown("""
         transition: all 0.3s ease !important;
     }
     
-    /* Botão verde de ação em massa */
+    /* Botão verde de ação em massa (Neuromarketing) */
     .render-btn button {
         background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
         color: white !important;
@@ -79,7 +79,7 @@ st.markdown("""
         box-shadow: 0 6px 25px rgba(16, 185, 129, 0.5) !important;
     }
 
-    /* Botão de Download verde claro */
+    /* Botão de Download verde claro (Neuromarketing) */
     div[data-testid="stDownloadButton"] > button {
         background: linear-gradient(135deg, #34D399 0%, #10B981 100%) !important;
         color: #080A11 !important;
@@ -226,7 +226,7 @@ else:
                         os.remove(f.name)
                         
                 barra_progresso.empty()
-                st.success("✅ Lote gerado com sucesso absoluta! Seus criativos de alta conversão estão prontos.")
+                st.success("✅ Lote gerado com sucesso absoluto! Seus criativos de alta conversão estão prontos.")
                 
                 with open(nome_arquivo_zip, "rb") as f_zip:
                     st.download_button(
@@ -234,4 +234,3 @@ else:
                         data=f_zip,
                         file_name=nome_arquivo_zip,
                         mime="application/zip"
-                    )

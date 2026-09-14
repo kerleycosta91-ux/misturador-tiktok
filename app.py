@@ -96,7 +96,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-SENHA_CORRETA = "VIRAVIRAL77"
+SENHA_CORRETA = st.secrets["senha_plataforma"]
 
 if not st.session_state.logado:
     st.markdown("""

@@ -87,9 +87,8 @@ if not st.session_state.logado:
  </div>
  """, unsafe_allow_html=True)
 
- col_l1, col_l2, col_l3 = st.columns(3)
- with col_l2:
- st.write("<br>", unsafe_allow_html=True)
+ senha_usuario = st.text_input("Digite aqui a senha para poder acessar o combinador de vídeos:", type="password")
+
  senha_usuario = st.text_input("Digite aqui a senha para acessar o combinador:", type="password")
 
  st.markdown("""

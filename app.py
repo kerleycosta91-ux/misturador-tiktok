@@ -3,7 +3,7 @@ import itertools
 import random
 import os
 import zipfile
-import subprocess
+import moviepy.editor as mp
 
 st.set_page_config(page_title="Vibe Certa - Combinação de Vídeos", page_icon="🎬", layout="wide")
 
@@ -76,11 +76,8 @@ if not st.session_state.logado:
             <div class='banner-subtitle'>Combinação Industrial Inteligente de Vídeos</div>
         </div>
     """, unsafe_allow_html=True)
-    
     st.write("<br>", unsafe_allow_html=True)
-    
     senha_usuario = st.text_input("Digite aqui a senha para poder acessar o combinador de vídeos:", type="password")
-    
     st.markdown("""
         <style>
         .login-btn button {
@@ -94,7 +91,6 @@ if not st.session_state.logado:
         .login-btn button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5) !important; }
         </style>
     """, unsafe_allow_html=True)
-    
     st.markdown("<div class='login-btn'>", unsafe_allow_html=True)
     if st.button("🔓 ENTRAR NO SISTEMA"):
         if senha_usuario == SENHA_CORRETA:
@@ -104,7 +100,6 @@ if not st.session_state.logado:
             st.error("❌ Chave incorreta! Verifique os dados ou fale com o suporte.")
     st.markdown("</div>", unsafe_allow_html=True)
     st.markdown("<br><p style='text-align: center; color: #718096; font-size: 14px;'>Plataforma Comercial Protegida. Direitos Reservados Vibe Certa.</p>", unsafe_allow_html=True)
-
 else:
     st.markdown("""
         <div style='display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(20, 26, 43, 0.5); border-radius: 12px; margin-bottom: 25px; border: 1px solid rgba(0, 242, 254, 0.1);'>
@@ -114,7 +109,6 @@ else:
             </div>
         </div>
     """, unsafe_allow_html=True)
-    
     col_out1, col_out2 = st.columns(2)
     with col_out2:
         st.markdown("""
@@ -133,7 +127,6 @@ else:
             st.session_state.logado = False
             st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
-
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown("<h3 style='color:#00F2FE !important;'>🧲 1. Seção de Ganchos</h3>", unsafe_allow_html=True)
@@ -144,24 +137,10 @@ else:
     with col3:
         st.markdown("<h3 style='color:#00F2FE !important;'>🛒 3. Chamadas (CTA)</h3>", unsafe_allow_html=True)
         ctas = st.file_uploader("Arraste as CTAs aqui (MP4)", accept_multiple_files=True, type=["mp4"])
-
     st.markdown("---")
-
     if ganchos and desenvolvimentos and ctas:
         total_possivel = len(ganchos) * len(desenvolvimentos) * len(ctas)
         st.info(f"📊 **Análise do Lote:** {total_possivel} combinações exclusivas com som original.")
-        
-        def misturar_lote_ffmpeg(v1, v2, v3, caminho_saida):
-            nome_lista_txt = f"lista_vibe_{random.randint(1000,9999)}.txt"
-            with open(nome_lista_txt, "w") as f:
-                f.write(f"file '{v1}'\n")
-                f.write(f"file '{v2}'\n")
-                f.write(f"file '{v3}'\n")
-            comando = ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", nome_lista_txt, "-c", "copy", caminho_saida]
-            subprocess.run(comando, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            if os.path.exists(nome_lista_txt):
-                os.remove(nome_lista_txt)
-
         st.markdown("""
             <style>
             .render-btn button {
@@ -173,56 +152,49 @@ else:
             }
             </style>
         """, unsafe_allow_html=True)
-        
         st.markdown("<div class='render-btn'>", unsafe_allow_html=True)
         executar_lote = st.button("🚀 INICIAR COMBINAÇÃO DE VÍDEOS EM MASSA")
         st.markdown("</div>", unsafe_allow_html=True)
-
         if executar_lote:
-            barra_progresso = st.progress(0, text="⚙️ Motores ativados...")
+            barra_progresso = st.progress(0, text="⚙️ Motores ativados... Processando áudio e vídeo.")
             try:
                 for f in ganchos + desenvolvimentos + ctas:
                     with open(f.name, "wb") as temp_f:
                         temp_f.write(f.read())
-
                 todas_combinacoes = list(itertools.product(ganchos, desenvolvimentos, ctas))
                 random.shuffle(todas_combinacoes)
-
                 nome_arquivo_zip = "lote_videos_vibecerta.zip"
                 arquivos_processados = []
-
                 for idx, combinacao in enumerate(todas_combinacoes):
-                    # CORREÇÃO AQUI: Desempacotando a tupla corretamente antes de ler o nome
                     g_item, d_item, c_item = combinacao
-                    arquivo_g = g_item.name
-                    arquivo_d = d_item.name
-                    arquivo_c = c_item.name
-                    
+                    clip1 = mp.VideoFileClip(g_item.name)
+                    clip2 = mp.VideoFileClip(d_item.name)
+                    clip3 = mp.VideoFileClip(c_item.name)
+                    final_clip = mp.concatenate_videoclips([clip1, clip2, clip3], method="compose")
                     nome_video_final = f"video_vibecerta_{idx+1}.mp4"
-                    
-                    misturar_lote_ffmpeg(arquivo_g, arquivo_d, arquivo_c, nome_video_final)
+                    final_clip.write_videofile(nome_video_final, fps=24, codec="libx264", audio_codec="aac", logger=None)
+                    clip1.close()
+                    clip2.close()
+                    clip3.close()
+                    final_clip.close()
                     arquivos_processados.append(nome_video_final)
-                    
                     progresso_atual = int(((idx + 1) / total_possivel) * 100)
                     barra_progresso.progress(progresso_atual, text=f"🎬 Criando variações... {idx+1}/{total_possivel}")
-
+                barra_progresso.progress(100, text="📦 Compactando e criptografando lote para entrega...")
                 with zipfile.ZipFile(nome_arquivo_zip, 'w') as zipf:
                     for arquivo_de_video in arquivos_processados:
                         if os.path.exists(arquivo_de_video):
                             zipf.write(arquivo_de_video)
                             os.remove(arquivo_de_video)
-                
                 for f in ganchos + desenvolvimentos + ctas:
                     if os.path.exists(f.name):
                         os.remove(f.name)
-
                 st.success("🎉 Lote completo concluído pela inteligência Vibe Certa!")
-                
                 with open(nome_arquivo_zip, "rb") as file:
                     st.markdown("<style>.down-btn button { background:#22C55E !important; color:white !important; font-size:18px !important; height:50px; }</style><div class='down-btn'>", unsafe_allow_html=True)
                     st.download_button(label="📥 BAIXAR LOTE COMPLETO DE VÍDEOS (.ZIP)", data=file, file_name=nome_arquivo_zip, mime="application/zip")
                     st.markdown("</div>", unsafe_allow_html=True)
             except Exception as e:
-                st.error(f"Ocorreu um erro: {e}")
+                st.error(f"Ocorreu um erro no processamento: {e}")
     else:
         st.info("💡 Carregue os trechos de mídia nos quadrantes acima para liberar os motores industriais de combinação.")

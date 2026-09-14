@@ -192,9 +192,12 @@ else:
                 arquivos_processados = []
 
                 for idx, combinacao in enumerate(todas_combinacoes):
-                    arquivo_g = combinacao.name
-                    arquivo_d = combinacao.name
-                    arquivo_c = combinacao.name
+                    # CORREÇÃO AQUI: Desempacotando a tupla corretamente antes de ler o nome
+                    g_item, d_item, c_item = combinacao
+                    arquivo_g = g_item.name
+                    arquivo_d = d_item.name
+                    arquivo_c = c_item.name
+                    
                     nome_video_final = f"video_vibecerta_{idx+1}.mp4"
                     
                     misturar_lote_ffmpeg(arquivo_g, arquivo_d, arquivo_c, nome_video_final)

@@ -1,17 +1,16 @@
 import streamlit as st
 import cv2
 import numpy as np
+import itertools
 import random
 import os
 
-st.title("🎬 Misturador de Vídeos - TikTok Shop")
-st.write("Envie seus trechos para gerar vídeos únicos com transições!")
+st.title("🎬 Super Misturador TikTok Shop (Modo Total)")
+st.write("Envie seus trechos e o sistema gerará automaticamente TODAS as combinações possíveis!")
 
 ganchos = st.file_uploader("1. Vídeos de GANCHO", accept_multiple_files=True, type=["mp4", "mov"])
 desenvolvimentos = st.file_uploader("2. Vídeos de DESENVOLVIMENTO", accept_multiple_files=True, type=["mp4", "mov"])
 ctas = st.file_uploader("3. Vídeos de CTA", accept_multiple_files=True, type=["mp4", "mov"])
-
-qtd = st.number_input("Quantas variações quer gerar?", min_value=1, max_value=20, value=3)
 
 def mesclar_videos(v1, v2, v3, out_path):
     cap1 = cv2.VideoCapture(v1)
@@ -34,26 +33,41 @@ def mesclar_videos(v1, v2, v3, out_path):
         cap.release()
     out.release()
 
-if st.button("🚀 Gerar e Misturar Vídeos"):
-    if not ganchos or not desenvolvimentos or not ctas:
-        st.error("Por favor, envie pelo menos 1 vídeo em cada categoria!")
-    else:
-        with st.spinner("Misturando vídeos... Aguarde."):
+# Se houver vídeos em todas as categorias, faz o cálculo automático
+if ganchos and desenvolvimentos and ctas:
+    total_possivel = len(ganchos) * len(desenvolvimentos) * len(ctas)
+    st.info(f"📊 Foram detectados: {len(ganchos)} Ganchos | {len(desenvolvimentos)} Desenvolvimentos | {len(ctas)} CTAs.")
+    st.success(f"🔥 **{total_possivel} vídeos únicos** serão gerados combinando todos os seus arquivos!")
+
+    if st.button("🚀 Gerar TODOS os Vídeos Possíveis"):
+        with st.spinner("Processando combinações... Aguarde até o final."):
             try:
+                # Salva os uploads temporariamente
                 for f in ganchos + desenvolvimentos + ctas:
                     with open(f.name, "wb") as temp_f:
                         temp_f.write(f.read())
 
-                for v_idx in range(int(qtd)):
-                    g = random.choice(ganchos).name
-                    d = random.choice(desenvolvimentos).name
-                    c = random.choice(ctas).name
+                # Gera todas as combinações sem repetir nenhuma
+                todas_combinacoes = list(itertools.product(ganchos, desenvolvimentos, ctas))
+                
+                # Embaralha a ordem de criação para não salvar em sequência óbvia
+                random.shuffle(todas_combinacoes)
+
+                for idx, comb in enumerate(todas_combinacoes):
+                    g, d, c = comb[0].name, comb[1].name, comb[2].name
+                    output_name = f"video_tiktok_comb_{idx+1}.mp4"
                     
-                    output_name = f"video_tiktok_{v_idx+1}.mp4"
                     mesclar_videos(g, d, c, output_name)
                     
                     with open(output_name, "rb") as file:
-                        st.download_button(label=f"📥 Baixar Vídeo {v_idx+1}", data=file, file_name=output_name, mime="video/mp4")
-                st.success("Todos os vídeos foram gerados com sucesso!")
+                        st.download_button(
+                            label=f"📥 Baixar Vídeo {idx+1} de {total_possivel}", 
+                            data=file, 
+                            file_name=output_name, 
+                            mime="video/mp4"
+                        )
+                st.success("🎉 Sensacional! Todas as variações foram geradas.")
             except Exception as e:
-                st.error(f"Erro ao processar: {e}")
+                st.error(f"Erro ao processar os arquivos: {e}")
+else:
+    st.warning("Aguardando o envio de arquivos em todas as 3 categorias para calcular o total.")

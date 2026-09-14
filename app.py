@@ -99,8 +99,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 st.write("<br>", unsafe_allow_html=True)
-senha_usuario = st.text_input("Digite aqui a senha para poder acessar o combinador de vídeos:", typ
-e="password")
+senha_usuario = st.text_input("Digite aqui a senha para poder acessar o combinador de vídeos:", type="password")
 st.markdown("""
 <style>
 .login-btn button {
@@ -111,8 +110,8 @@ width: 100%;
 font-size: 18px !important;
 box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3) !important;
 }
-.login-btn button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 242, 254,
-0.5) !important; }
+.login-btn button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5) !importa
+nt; }
 </style>
 """, unsafe_allow_html=True)
 st.markdown("<div class='login-btn'>", unsafe_allow_html=True)
@@ -123,19 +122,17 @@ st.rerun()
 else:
 st.error("■ Chave incorreta! Verifique os dados ou fale com o suporte.")
 st.markdown("</div>", unsafe_allow_html=True)
-st.markdown("<br><p style='text-align: center; color: #718096; font-size: 14px;'>Plataforma Comerci
-al Protegida. Direitos Reservados Vibe Certa.</p>", unsafe_allow_html=True)
+st.markdown("<br><p style='text-align: center; color: #718096; font-size: 14px;'>Plataforma Comercial Protegida.
+Direitos Reservados Vibe Certa.</p>", unsafe_allow_html=True)
 else:
 st.markdown("""
-<div style='display: flex; justify-content: space-between; align-items: center; padding: 20px;
-background: rgba(20, 26, 43, 0.5); border-radius: 12px; margin-bottom: 25px; border: 1px solid rgba(0,
-242, 254, 0.1);'>
+<div style='display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rg
+ba(20, 26, 43, 0.5); border-radius: 12px; margin-bottom: 25px; border: 1px solid rgba(0, 242, 254, 0.1);'>
 <div>
-<h2 style='margin:0; background: linear-gradient(45deg, #00F2FE, #4FACFE); -webkit-back
-ground-clip: text; -webkit-text-fill-color: transparent; font-weight:800;'>■ Vibe Certa | Combinação de
-Vídeos</h2>
-<p style='margin:0; color:#A0AEC0; font-size:14px;'>Acesso Premium Ativo • Produção de
-Criativos TikTok & Kwai</p>
+<h2 style='margin:0; background: linear-gradient(45deg, #00F2FE, #4FACFE); -webkit-background-clip: t
+ext; -webkit-text-fill-color: transparent; font-weight:800;'>■ Vibe Certa | Combinação de Vídeos</h2>
+<p style='margin:0; color:#A0AEC0; font-size:14px;'>Acesso Premium Ativo • Produção de Criativos TikT
+ok & Kwai</p>
 </div>
 </div>
 """, unsafe_allow_html=True)
@@ -149,8 +146,8 @@ color: #E2E8F0 !important;
 border: 1px solid #4A5568 !important;
 width: 100%;
 }
-.sair-btn button:hover { background: #FE2C55 !important; color: white !important; border-co
-lor: #FE2C55 !important; }
+.sair-btn button:hover { background: #FE2C55 !important; color: white !important; border-color: #FE2C55 !
+important; }
 </style>
 """, unsafe_allow_html=True)
 st.markdown("<div class='sair-btn'>", unsafe_allow_html=True)
@@ -160,18 +157,14 @@ st.rerun()
 st.markdown("</div>", unsafe_allow_html=True)
 col1, col2, col3 = st.columns(3)
 with col1:
-st.markdown("<h3 style='color:#00F2FE !important;'>■ 1. Seção de Ganchos</h3>", unsafe_allow_ht
-ml=True)
-ganchos = st.file_uploader("Arraste os ganchos aqui (MP4)", accept_multiple_files=True, type=["
-mp4"])
+st.markdown("<h3 style='color:#00F2FE !important;'>■ 1. Seção de Ganchos</h3>", unsafe_allow_html=True)
+ganchos = st.file_uploader("Arraste os ganchos aqui (MP4)", accept_multiple_files=True, type=["mp4"])
 with col2:
-st.markdown("<h3 style='color:#00F2FE !important;'>■ 2. Desenvolvimento</h3>", unsafe_allow_htm
-l=True)
-desenvolvimentos = st.file_uploader("Arraste o conteúdo aqui (MP4)", accept_multiple_files=True
-, type=["mp4"])
+st.markdown("<h3 style='color:#00F2FE !important;'>■ 2. Desenvolvimento</h3>", unsafe_allow_html=True)
+desenvolvimentos = st.file_uploader("Arraste o conteúdo aqui (MP4)", accept_multiple_files=True, type=["mp4"]
+)
 with col3:
-st.markdown("<h3 style='color:#00F2FE !important;'>■ 3. Chamadas (CTA)</h3>", unsafe_allow_html
-=True)
+st.markdown("<h3 style='color:#00F2FE !important;'>■ 3. Chamadas (CTA)</h3>", unsafe_allow_html=True)
 ctas = st.file_uploader("Arraste as CTAs aqui (MP4)", accept_multiple_files=True, type=["mp4"])
 st.markdown("---")
 if ganchos and desenvolvimentos and ctas:
@@ -197,16 +190,16 @@ clip2 = mp.VideoFileClip(d_item.name)
 clip3 = mp.VideoFileClip(c_item.name)
 final_clip = mp.concatenate_videoclips([clip1, clip2, clip3], method="compose")
 nome_video_final = f"video_vibecerta_{idx+1}.mp4"
-final_clip.write_videofile(nome_video_final, fps=24, codec="libx264", audio_codec="
-aac", logger=None)
+final_clip.write_videofile(nome_video_final, fps=24, codec="libx264", audio_codec="aac", logger=N
+one)
 clip1.close()
 clip2.close()
 clip3.close()
 final_clip.close()
 arquivos_processados.append(nome_video_final)
 progresso_atual = int(((idx + 1) / total_possivel) * 100)
-barra_progresso.progress(progresso_atual, text=f"■ Criando variações... {idx+1}/{to
-tal_possivel}")
+barra_progresso.progress(progresso_atual, text=f"■ Criando variações... {idx+1}/{total_possivel}"
+)
 with zipfile.ZipFile(nome_arquivo_zip, 'w') as zipf:
 for arquivo in arquivos_processados:
 zipf.write(arquivo)
@@ -215,8 +208,7 @@ for f in ganchos + desenvolvimentos + ctas:
 if os.path.exists(f.name):
 os.remove(f.name)
 barra_progresso.empty()
-st.success("■ Lote gerado com sucesso absoluto! Seus criativos de alta conversão estão
-prontos.")
+st.success("■ Lote gerado com sucesso absoluto! Seus criativos de alta conversão estão prontos.")
 with open(nome_arquivo_zip, "rb") as f_zip:
 st.download_button(
 label="■ BAIXAR PACOTE DE VÍDEOS (.ZIP)",

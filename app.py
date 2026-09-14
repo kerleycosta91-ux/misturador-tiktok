@@ -5,128 +5,231 @@ import os
 import zipfile
 import subprocess
 
-# Configuração da página com a identidade da sua nova marca
-st.set_page_config(page_title="Vibe Certa - Misturador Automático", page_icon="🎬", layout="wide")
+# Configuração da página com a identidade da sua marca
+st.set_page_config(page_title="Vibe Certa - Combinação de Vídeos", page_icon="🎬", layout="wide")
 
-# Estilização visual voltada a Neuromarketing e Vendas (Dark Mode + Neon)
+# Inicializa o estado de login se não existir
+if "logado" not in st.session_state:
+    st.session_state.logado = False
+
+# --- DESIGN PREMIUM, BANNER EM DESTAQUE E ÍCONES FLUTUANTES (TIKTOK/KWAI) ---
 st.markdown("""
     <style>
-    .stApp { background-color: #0B0D17; color: #E2E8F0; }
-    h1 { color: #FFFFFF !important; font-weight: 800 !important; background: linear-gradient(45deg, #00F2FE, #4FACFE); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    h3 { color: #00F2FE !important; }
-    div.stButton > button:first-child { background: linear-gradient(135deg, #00F2FE 0%, #4FACFE 100%) !important; color: #0B0D17 !important; font-weight: bold !important; font-size: 16px !important; border-radius: 8px !important; border: none !important; width: 100%; height: 50px; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3) !important; transition: all 0.3s ease; }
-    div.stButton > button:first-child:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5) !important; }
+    /* Fundo Escuro Premium com Elementos Gráficos Digitais */
+    .stApp {
+        background-color: #080A11;
+        background-image: 
+            radial-gradient(at 10% 10%, rgba(0, 242, 254, 0.05) 0px, transparent 50%),
+            radial-gradient(at 90% 90%, rgba(254, 44, 85, 0.05) 0px, transparent 50%);
+        color: #E2E8F0;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Marcas d'água sutis simulando ícones no fundo */
+    .stApp::before {
+        content: "🎵   📹   📱   🎵   🎦   📹   🎵";
+        position: fixed;
+        top: 15%;
+        left: 5%;
+        font-size: 32px;
+        opacity: 0.03;
+        letter-spacing: 50px;
+        word-spacing: 30px;
+        pointer-events: none;
+        line-height: 200px;
+        width: 90%;
+    }
+
+    /* Estilização do Banner Principal */
+    .banner-container {
+        text-align: center;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, rgba(11, 15, 26, 0.8) 0%, rgba(20, 26, 43, 0.8) 100%);
+        border-radius: 20px;
+        border: 1px solid rgba(0, 242, 254, 0.15);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        margin-bottom: 30px;
+    }
+    
+    /* Nome Vibe Certa com Destaque Neon */
+    .banner-title {
+        font-size: 64px !important;
+        font-weight: 900 !important;
+        margin: 0;
+        letter-spacing: -1px;
+        background: linear-gradient(45deg, #00F2FE, #4FACFE, #FE2C55);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 40px rgba(0, 242, 254, 0.3);
+    }
+    
+    .banner-subtitle {
+        color: #A0AEC0 !important;
+        font-size: 20px;
+        margin-top: 10px;
+        font-weight: 400;
+    }
+
+    /* Inputs e Botões customizados */
+    div.stButton > button {
+        border-radius: 8px !important;
+        border: none !important;
+        font-weight: bold !important;
+        transition: all 0.3s ease !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🎬 Vibe Certa")
-st.subheader("Misturador de Vídeos Inteligente para o TikTok Shop")
+# Senha que você vai vender para os clientes
+SENHA_CORRETA = "VIRAVIRAL77"
 
-# --- SUA CHAVE DE ACESSO EXCLUSIVA PARA VENDER ---
-CHAVE_SEC_CORRETA = "VIRAVIRAL77" 
-
-st.sidebar.markdown("### 🔑 Ativação da Licença")
-senha_usuario = st.sidebar.text_input("Insira sua Chave de Acesso:", type="password")
-
-if senha_usuario != CHAVE_SEC_CORRETA:
-    st.warning("🔒 Área Restrita para Assinantes. Insira sua chave na barra lateral para liberar os motores da Vibe Certa.")
-    st.info("💡 **Deseja adquirir o acesso?** Efetue o pagamento e receba sua chave exclusiva para começar a lucrar com vídeos automáticos.")
-else:
-    st.sidebar.success("✅ Licença Ativada com Sucesso!")
+# ==========================================
+# TELA DE LOGIN ISOLADA (ANTES DE ENTRAR)
+# ==========================================
+if not st.session_state.logado:
+    # Exibe o seu Banner Customizado na entrada
+    st.markdown("""
+        <div class='banner-container'>
+            <div class='banner-title'>🎬 VIBE CERTA</div>
+            <div class='banner-subtitle'>Combinação Industrial Inteligente de Vídeos</div>
+        </div>
+    """, unsafe_allow_html=True)
     
+    # Caixa centralizada de login
+    col_l1, col_l2, col_l3 = st.columns([1, 2, 1])
+    with col_l2:
+        st.write("<br>", unsafe_allow_html=True)
+        senha_usuario = st.text_input("Digite aqui a senha para poder acessar o combinador de vídeos:", type="password", help="Chave única fornecida após a compra")
+        
+        # Botão estilizado para Entrar
+        st.markdown("""
+            <style>
+            .login-btn button {
+                background: linear-gradient(135deg, #00F2FE 0%, #4FACFE 100%) !important;
+                color: #080A11 !important;
+                height: 50px;
+                width: 100%;
+                font-size: 18px !important;
+                box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3) !important;
+            }
+            .login-btn button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5) !important; }
+            </style>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("<div class='login-btn'>", unsafe_allow_html=True)
+        if st.button("🔓 ENTRAR NO SISTEMA"):
+            if senha_usuario == SENHA_CORRETA:
+                st.session_state.logado = True
+                st.rerun()
+            else:
+                st.error("❌ Chave incorreta! Verifique os dados ou fale com o suporte.")
+        st.markdown("</div>", unsafe_allow_html=True)
+        
+        st.markdown("<br><p style='text-align: center; color: #718096; font-size: 14px;'>Plataforma Comercial Protegida. Direitos Reservados Vibe Certa.</p>", unsafe_allow_html=True)
+
+# ==========================================
+# PAINEL DO SITE LIBERADO (APÓS LOGIN)
+# ==========================================
+else:
+    # Topo do site após o login com o Banner um pouco menor e botão Sair integrado
+    st.markdown("""
+        <div style='display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(20, 26, 43, 0.5); border-radius: 12px; margin-bottom: 25px; border: 1px solid rgba(0, 242, 254, 0.1);'>
+            <div>
+                <h2 style='margin:0; background: linear-gradient(45deg, #00F2FE, #4FACFE); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight:800;'>🎬 Vibe Certa | Combinação de Vídeos</h2>
+                <p style='margin:0; color:#A0AEC0; font-size:14px;'>Acesso Premium Ativo • Produção de Criativos TikTok & Kwai</p>
+            </div>
+            <div id='logout-placeholder'></div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Posicionamento do botão sair no canto superior direito
+    col_out1, col_out2 = st.columns([5, 1])
+    with col_out2:
+        st.markdown("""
+            <style>
+            .sair-btn button {
+                background: #1A202C !important;
+                color: #E2E8F0 !important;
+                border: 1px solid #4A5568 !important;
+                width: 100%;
+            }
+            .sair-btn button:hover { background: #FE2C55 !important; color: white !important; border-color: #FE2C55 !important; }
+            </style>
+        """, unsafe_allow_html=True)
+        st.markdown("<div class='sair-btn'>", unsafe_allow_html=True)
+        if st.button("🔒 Sair do Site"):
+            st.session_state.logado = False
+            st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
+
     # Layout de Uploads Premium
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.markdown("### 🧲 1. Seção de Ganchos")
-        st.caption("Vídeos iniciais de forte retenção.")
+        st.markdown("<h3 style='color:#00F2FE !important;'>🧲 1. Seção de Ganchos</h3>", unsafe_allow_html=True)
+        st.caption("Primeiros 3 segundos focados em retenção pesada.")
         ganchos = st.file_uploader("Arraste os ganchos aqui (MP4)", accept_multiple_files=True, type=["mp4"])
     with col2:
-        st.markdown("### 📦 2. Desenvolvimento")
-        st.caption("Demonstração e quebra de objeções.")
+        st.markdown("<h3 style='color:#00F2FE !important;'>📦 2. Desenvolvimento</h3>", unsafe_allow_html=True)
+        st.caption("Apresentação do produto e quebra de objeções.")
         desenvolvimentos = st.file_uploader("Arraste o conteúdo aqui (MP4)", accept_multiple_files=True, type=["mp4"])
     with col3:
-        st.markdown("### 🛒 3. Chamadas (CTA)")
-        st.caption("Vídeos empurrando para o carrinho.")
+        st.markdown("<h3 style='color:#00F2FE !important;'>🛒 3. Chamadas (CTA)</h3>", unsafe_allow_html=True)
+        st.caption("Instruções de compra focadas em clique e conversão.")
         ctas = st.file_uploader("Arraste as CTAs aqui (MP4)", accept_multiple_files=True, type=["mp4"])
 
     st.markdown("---")
 
     if ganchos and desenvolvimentos and ctas:
-        # Cálculo exato do total de variações possíveis
         total_possivel = len(ganchos) * len(desenvolvimentos) * len(ctas)
-        st.info(f"📊 **Análise Estatística:** {len(ganchos)} Ganchos × {len(desenvolvimentos)} Desenvolvimentos × {len(ctas)} CTAs = {total_possivel} combinações exclusivas com áudio.")
+        st.info(f"📊 **Análise do Painel:** {len(ganchos)} Ganchos × {len(desenvolvimentos)} Desenvolvimentos × {len(ctas)} CTAs = {total_possivel} combinações únicas processadas com áudio original.")
         
-        # Motor FFmpeg ultra-leve e imune a travamentos de memória do servidor
         def misturar_lote_ffmpeg(v1, v2, v3, caminho_saida):
             nome_lista_txt = f"lista_vibe_{random.randint(1000,9999)}.txt"
             with open(nome_lista_txt, "w") as f:
                 f.write(f"file '{v1}'\n")
                 f.write(f"file '{v2}'\n")
                 f.write(f"file '{v3}'\n")
-            
-            comando = [
-                "ffmpeg", "-y", "-f", "concat", "-safe", "0", 
-                "-i", nome_lista_txt, "-c", "copy", caminho_saida
-            ]
-            
+            comando = ["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", nome_lista_txt, "-c", "copy", caminho_saida]
             subprocess.run(comando, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             if os.path.exists(nome_lista_txt):
                 os.remove(nome_lista_txt)
 
-        if st.button("🚀 INICIAR COMBINAÇÃO DE VÍDEOS EM MASSA"):
-            barra_progresso = st.progress(0, text="⚙️ Gerando vídeos... Não feche esta página.")
+        st.markdown("""
+            <style>
+            .render-btn button {
+                background: linear-gradient(135deg, #00F2FE 0%, #FE2C55 100%) !important;
+                color: white !important;
+                height: 55px;
+                font-size: 18px !important;
+                box-shadow: 0 4px 20px rgba(0, 242, 254, 0.25) !important;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("<div class='render-btn'>", unsafe_allow_html=True)
+        executar_lote = st.button("🚀 INICIAR COMBINAÇÃO DE VÍDEOS EM MASSA")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        if executar_lote:
+            barra_progresso = st.progress(0, text="⚙️ Motores ativados... Montando mídias digitais.")
             
             try:
-                # Armazena temporariamente os arquivos enviados pelos usuários
                 for f in ganchos + desenvolvimentos + ctas:
                     with open(f.name, "wb") as temp_f:
                         temp_f.write(f.read())
 
-                # Monta a estrutura correta de combinações puxando o nome real da mídia
                 todas_combinacoes = list(itertools.product(ganchos, desenvolvimentos, ctas))
                 random.shuffle(todas_combinacoes)
 
                 nome_arquivo_zip = "lote_videos_vibecerta.zip"
                 arquivos_processados = []
 
-                # Loop de geração corrigido (Extraindo os dados sem o erro de tupla)
                 for idx, combinacao in enumerate(todas_combinacoes):
-                    arquivo_g = combinacao[0].name
-                    arquivo_d = combinacao[1].name
-                    arquivo_c = combinacao[2].name
-                    
+                    arquivo_g = combinacao.name
+                    arquivo_d = combinacao.name
+                    arquivo_c = combinacao.name
                     nome_video_final = f"video_vibecerta_{idx+1}.mp4"
                     
                     misturar_lote_ffmpeg(arquivo_g, arquivo_d, arquivo_c, nome_video_final)
                     arquivos_processados.append(nome_video_final)
                     
-                    # Atualização cirúrgica da barra na tela
-                    progresso_atual = int(((idx + 1) / total_possivel) * 100)
-                    barra_progresso.progress(progresso_atual, text=f"🎬 Criando variações... {progresso_atual}% completo ({idx+1}/{total_possivel})")
-
-                # Junta os vídeos criados dentro do pacote ZIP compactado
-                barra_progresso.progress(100, text="📦 Reunindo e gerando arquivo ZIP final...")
-                with zipfile.ZipFile(nome_arquivo_zip, 'w') as zipf:
-                    for arquivo_de_video in arquivos_processados:
-                        if os.path.exists(arquivo_de_video):
-                            zipf.write(arquivo_de_video)
-                            os.remove(arquivo_de_video) # Limpa o lixo interno para não acumular
-                
-                # Apaga os rascunhos de uploads para o site ficar sempre limpo e rápido
-                for f in ganchos + desenvolvimentos + ctas:
-                    if os.path.exists(f.name):
-                        os.remove(f.name)
-
-                st.success("🎉 Sensacional! Seu lote de criativos COM SOM foi concluído pela inteligência Vibe Certa.")
-                
-                with open(nome_arquivo_zip, "rb") as file:
-                    st.download_button(
-                        label="📥 BAIXAR LOTE COMPLETO DE VÍDEOS (.ZIP)", 
-                        data=file, 
-                        file_name=nome_arquivo_zip, 
-                        mime="application/zip"
-                    )
-            except Exception as e:
-                st.error(f"Ocorreu um erro inesperado no processamento: {e}")
-    else:
-        st.info("💡 Carregue os seus trechos de vídeo nos blocos superiores para liberar o painel de produção.")

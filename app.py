@@ -87,7 +87,6 @@ SENHA_CORRETA = "VIRAVIRAL77"
 # TELA DE LOGIN ISOLADA (ANTES DE ENTRAR)
 # ==========================================
 if not st.session_state.logado:
-    # Exibe o seu Banner Customizado na entrada
     st.markdown("""
         <div class='banner-container'>
             <div class='banner-title'>🎬 VIBE CERTA</div>
@@ -95,13 +94,11 @@ if not st.session_state.logado:
         </div>
     """, unsafe_allow_html=True)
     
-    # Caixa centralizada de login
     col_l1, col_l2, col_l3 = st.columns([1, 2, 1])
     with col_l2:
         st.write("<br>", unsafe_allow_html=True)
-        senha_usuario = st.text_input("Digite aqui a senha para poder acessar o combinador de vídeos:", type="password", help="Chave única fornecida após a compra")
+        senha_usuario = st.text_input("Digite aqui a senha para poder acessar o combinador de vídeos:", type="password")
         
-        # Botão estilizado para Entrar
         st.markdown("""
             <style>
             .login-btn button {
@@ -124,25 +121,21 @@ if not st.session_state.logado:
             else:
                 st.error("❌ Chave incorreta! Verifique os dados ou fale com o suporte.")
         st.markdown("</div>", unsafe_allow_html=True)
-        
         st.markdown("<br><p style='text-align: center; color: #718096; font-size: 14px;'>Plataforma Comercial Protegida. Direitos Reservados Vibe Certa.</p>", unsafe_allow_html=True)
 
 # ==========================================
 # PAINEL DO SITE LIBERADO (APÓS LOGIN)
 # ==========================================
 else:
-    # Topo do site após o login com o Banner um pouco menor e botão Sair integrado
     st.markdown("""
         <div style='display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(20, 26, 43, 0.5); border-radius: 12px; margin-bottom: 25px; border: 1px solid rgba(0, 242, 254, 0.1);'>
             <div>
                 <h2 style='margin:0; background: linear-gradient(45deg, #00F2FE, #4FACFE); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight:800;'>🎬 Vibe Certa | Combinação de Vídeos</h2>
                 <p style='margin:0; color:#A0AEC0; font-size:14px;'>Acesso Premium Ativo • Produção de Criativos TikTok & Kwai</p>
             </div>
-            <div id='logout-placeholder'></div>
         </div>
     """, unsafe_allow_html=True)
     
-    # Posicionamento do botão sair no canto superior direito
     col_out1, col_out2 = st.columns([5, 1])
     with col_out2:
         st.markdown("""
@@ -162,7 +155,6 @@ else:
             st.rerun()
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # Layout de Uploads Premium
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown("<h3 style='color:#00F2FE !important;'>🧲 1. Seção de Ganchos</h3>", unsafe_allow_html=True)
@@ -233,3 +225,7 @@ else:
                     misturar_lote_ffmpeg(arquivo_g, arquivo_d, arquivo_c, nome_video_final)
                     arquivos_processados.append(nome_video_final)
                     
+                    progresso_atual = int(((idx + 1) / total_possivel) * 100)
+                    barra_progresso.progress(progresso_atual, text=f"🎬 Criando variações... {progresso_atual}% completo ({idx+1}/{total_possivel})")
+
+                barra_progresso.progress(100, text="📦 Compactando e criptografando arquivos de mídia para entrega...")
